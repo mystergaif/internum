@@ -1,0 +1,5 @@
+;!@Install@!UTF-8!
+Title="InterNum 3D Cube Application"
+BeginPrompt="Запустить InterNum 3D Cube Application?"
+ExecuteFile="InterNumApp.exe"
+;!@InstallEnd@!
