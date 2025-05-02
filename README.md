@@ -1,10 +1,30 @@
-# InterNum - Демонстрационный проект для создания самодостаточных Java-приложений
+# InterNum - Самодостаточные Java-приложения
 
-Этот проект демонстрирует различные способы создания самодостаточных исполняемых файлов из Java-приложения, которые можно распространять без необходимости установки Java на компьютер пользователя.
+![InterNum Logo](docs/images/internum-logo.png)
 
-## Описание
+InterNum - это демонстрационный проект, показывающий, как создавать полностью самодостаточные исполняемые файлы из Java-приложений, которые можно запускать на Windows без установки Java и без распаковки дополнительных файлов.
 
-Проект содержит простое 3D-приложение с вращающимся кубом, использующее LWJGL (Lightweight Java Game Library) и OpenGL. Основная цель проекта - продемонстрировать различные методы упаковки Java-приложения в самодостаточные исполняемые файлы.
+## 🚀 Возможности
+
+- **Полная независимость** - не требует установки Java на компьютере пользователя
+- **Один файл** - не требует распаковки дополнительных файлов перед запуском
+- **Без следов** - не оставляет временных файлов после завершения работы
+- **Простота использования** - запускается одним щелчком мыши
+- **Кроссплатформенность** - поддерживает Windows, Linux и macOS (с разными методами упаковки)
+
+## 📦 Готовые сборки
+
+В разделе [Releases](https://github.com/mystergaif/internum/releases) вы найдете готовые сборки:
+
+- **InterNumApp_Standalone.exe** (28 МБ) - полностью самодостаточный EXE-файл для Windows
+- **InterNumApp_Standalone_Debug.exe** (28 МБ) - отладочная версия с логированием
+- **internum-app-1.0-SNAPSHOT.jar** (2.5 МБ) - JAR-файл для запуска на системах с установленной Java 17
+
+## 🖥️ Демонстрационное приложение
+
+Проект включает простое 3D-приложение с вращающимся кубом, использующее LWJGL (Lightweight Java Game Library) и OpenGL:
+
+![InterNum 3D Cube](docs/images/internum-screenshot.png)
 
 Куб имеет разноцветные грани:
 - Передняя грань - красная
@@ -14,592 +34,356 @@
 - Правая грань - пурпурная
 - Левая грань - голубая
 
-## Возможности проекта
+## 🛠️ Технологии упаковки
 
-- Создание JAR-файла со всеми зависимостями (fat JAR)
-- Создание автономного приложения с включенной JRE с помощью packr
-- Создание EXE-файла с помощью Launch4j
-- Создание установщика с помощью NSIS
+Проект демонстрирует несколько методов создания самодостаточных приложений:
 
-## Требования для сборки
+### 1. NSIS (Nullsoft Scriptable Install System)
+
+Создает EXE-файл, который:
+- Распаковывает приложение и JRE во временную директорию
+- Запускает приложение
+- После закрытия приложения удаляет все временные файлы
+
+### 2. Launch4j
+
+Создает EXE-файл, который:
+- Запускает JAR-файл с помощью указанной JRE
+- Поддерживает настройку параметров запуска
+- Показывает заставку и сообщения об ошибках
+
+### 3. Maven Shade Plugin
+
+Создает "fat JAR" - JAR-файл, который:
+- Содержит все необходимые зависимости
+- Может быть запущен с помощью команды `java -jar`
+- Требует наличия установленной Java на компьютере пользователя
+
+## 🔧 Сборка проекта
+
+### Требования
 
 - Java Development Kit (JDK) 17 или выше
 - Apache Maven 3.6.0 или выше
-- Launch4j для создания EXE-файла (опционально)
-- NSIS для создания установщика (опционально)
-- Интегрированная среда разработки (IDE) с поддержкой Java (рекомендуется IntelliJ IDEA или Eclipse)
-
-## Команды для сборки
-
-### 1. Клонирование репозитория (если используете Git)
-
-```bash
-# Клонировать репозиторий
-git clone <url-репозитория>
-cd internum-app
-```
-
-### 2. Сборка JAR-файла
-
-```bash
-# Перейти в директорию проекта
-cd internum-app
-
-# Очистить и собрать проект
-mvn clean package
-```
-
-Эта команда создаст JAR-файл `target/internum-app-1.0-SNAPSHOT.jar` со всеми зависимостями.
-
-### 3. Создание автономного приложения с помощью packr и NSIS
-
-Мы можем создать автономное приложение с помощью packr, а затем создать установщик с помощью NSIS, который будет распаковывать приложение во временную директорию, запускать его, а затем удалять временные файлы.
-
-#### Шаг 1: Создание автономного приложения с помощью packr
-
-[Packr](https://github.com/libgdx/packr) - это инструмент, который создает нативные исполняемые файлы для Java-приложений, включая минимизированную JRE.
-
-```bash
-# Скачать packr
-wget https://github.com/libgdx/packr/releases/download/4.0.0/packr-all-4.0.0.jar
-
-# Создать конфигурационный файл packr
-cat > packr-config.json << EOF
-{
-    "platform": "windows64",
-    "jdk": "jre",
-    "executable": "InterNumApp",
-    "classpath": [
-        "target/internum-app-1.0-SNAPSHOT.jar"
-    ],
-    "mainclass": "com.internum.AppLauncher",
-    "vmargs": [
-        "-Xms128m",
-        "-Xmx512m"
-    ],
-    "minimizejre": "soft",
-    "output": "InterNumApp_Standalone"
-}
-EOF
-
-# Запустить packr
-java -jar packr-all-4.0.0.jar packr-config.json
-```
-
-Эта команда создаст директорию `InterNumApp_Standalone` с автономным приложением, включающим минимизированную JRE.
-
-#### Шаг 2: Создание установщика с помощью NSIS
-
-[NSIS](https://nsis.sourceforge.io/) - это система для создания установщиков Windows.
-
-```bash
-# Создать скрипт NSIS
-cat > installer.nsi << EOF
-; Installer script for InterNum 3D Cube Application
-
-; Define the name of the installer
-Name "InterNum 3D Cube Application"
-OutFile "InterNumApp_Installer.exe"
-
-; Default installation directory
-InstallDir "\$TEMP\\InterNumApp"
-
-; Request application privileges
-RequestExecutionLevel user
-
-; Set compression
-SetCompressor /SOLID lzma
-
-; Silent installer
-SilentInstall silent
-AutoCloseWindow true
-ShowInstDetails hide
-
-; Modern UI
-!include "MUI2.nsh"
-
-; No pages
-!insertmacro MUI_PAGE_INSTFILES
-
-; Language
-!insertmacro MUI_LANGUAGE "Russian"
-
-; The stuff to install
-Section "Main Application" SecMain
-  ; Set cursor to wait
-  System::Call 'user32::SetCursor(i \$HWNDPARENT)'
-
-  ; Create directory
-  SetOutPath "\$INSTDIR"
-
-  ; Copy all files from the InterNumApp_Standalone directory
-  File /r "InterNumApp_Standalone\\*.*"
-
-  ; Run the application
-  ExecWait '"\$INSTDIR\\InterNumApp.exe"'
-
-  ; Clean up after the application is closed
-  RMDir /r "\$INSTDIR"
-SectionEnd
-
-; Set cursor back to normal on exit
-Function .onGUIEnd
-  System::Call 'user32::SetCursor(i 0)'
-FunctionEnd
-EOF
-
-# Создать установщик
-makensis installer.nsi
-```
-
-Эта команда создаст установщик `InterNumApp_Installer.exe`, который при запуске будет показывать только анимацию загрузки (курсор в виде песочных часов), распаковывать все необходимые файлы во временную директорию, запускать приложение, а после закрытия приложения удалять временные файлы.
-
-### 4. Альтернативный способ: Создание EXE-файла с помощью Launch4j
-
-Если вы предпочитаете использовать Launch4j, вы можете создать EXE-файл следующим образом:
-
-#### Для Windows:
-
-```bash
-# Запустить Launch4j с конфигурационным файлом
-launch4j.exe internum-app.xml
-```
-
-#### Для Linux:
-
-```bash
-# Запустить Launch4j с конфигурационным файлом
-./launch4j/launch4j internum-app.xml
-```
-
-Эта команда создаст EXE-файл `InterNumApp.exe` в корневой директории проекта. Обратите внимание, что этот EXE-файл будет искать JRE в папке `jre`, которая должна находиться в той же директории.
-
-## Запуск приложения
-
-### Запуск из исходного кода
-
-```bash
-# Запустить приложение с помощью Maven
-mvn exec:java -Dexec.mainClass="com.internum.Cube3DApp"
-```
-
-### Запуск JAR-файла
-
-```bash
-# Запустить JAR-файл
-java -jar target/internum-app-1.0-SNAPSHOT.jar
-```
-
-### Запуск приложения
-
-#### Запуск установщика, созданного с помощью NSIS
-
-Если вы создали установщик с помощью NSIS, просто запустите `InterNumApp_Installer.exe`. При запуске установщика:
-
-1. Курсор мыши изменится на "песочные часы" (анимация загрузки).
-2. Установщик автоматически распакует все необходимые файлы во временную директорию (`%TEMP%\InterNumApp`).
-3. Запустится приложение с 3D кубом.
-4. После закрытия приложения все временные файлы будут автоматически удалены.
-
-Это самый удобный способ запуска приложения, так как пользователю нужно только запустить один EXE-файл, и все остальное будет сделано автоматически без отображения каких-либо диалоговых окон или запросов.
-
-#### Запуск приложения, созданного с помощью packr
-
-Если вы создали приложение с помощью packr, просто распакуйте архив `InterNumApp_Standalone.zip` и запустите `InterNumApp.exe`. Все необходимые файлы уже включены в архив, и вам не нужно устанавливать Java или распаковывать дополнительные файлы.
-
-Структура директорий после распаковки архива:
-
-```
-InterNumApp_Standalone/
-├── InterNumApp.exe
-├── internum-app-1.0-SNAPSHOT.jar
-├── InterNumApp.json
-└── jre/
-    ├── bin/
-    ├── conf/
-    ├── lib/
-    └── ...
-```
-
-#### Запуск приложения, созданного с помощью Launch4j
-
-Если вы создали приложение с помощью Launch4j, вам нужно убедиться, что папка `jre` находится в той же директории, что и EXE-файл. Структура директорий должна выглядеть следующим образом:
-
-```
-InterNumApp/
-├── InterNumApp.exe
-└── jre/
-    └── windows/
-        ├── bin/
-        ├── conf/
-        ├── lib/
-        └── ...
-```
-
-Если вы распаковали архив `InterNumApp_with_JRE.zip`, то структура директорий уже будет правильной.
-
-## Структура проекта
-
-```
-internum-app/
-├── src/                           # Исходный код
-│   └── main/java/com/internum/    # Пакет с классами
-│       ├── AppLauncher.java       # Точка входа в приложение
-│       ├── Cube3DApp.java         # Основной класс 3D приложения
-│       └── ConsoleApp.java        # Альтернативная версия с Swing UI
-│   └── module-info.java           # Описание модуля Java
-├── pom.xml                        # Конфигурация Maven
-├── internum-app.xml               # Конфигурация Launch4j
-├── installer.nsi                  # Скрипт NSIS
-└── README.md                      # Этот файл
-```
-
-## Как это работает
-
-### 1. Maven Shade Plugin
-
-Maven Shade Plugin создает "fat JAR" - JAR-файл, который содержит все необходимые зависимости и может быть запущен с помощью команды `java -jar`. Это самый простой способ распространения Java-приложения, но требует наличия установленной Java на компьютере пользователя.
-
-### 2. Packr
-
-Packr создает автономное приложение, которое включает минимизированную JRE. Это позволяет пользователям запускать приложение без установки Java. Packr поддерживает Windows, Linux и macOS.
-
-### 3. Launch4j
-
-Launch4j создает EXE-файл, который запускает JAR-файл с помощью указанной JRE. Это позволяет пользователям запускать приложение как обычное Windows-приложение.
-
-### 4. NSIS
-
-NSIS создает установщик, который распаковывает приложение во временную директорию, запускает его, а затем удаляет временные файлы. Это самый удобный способ распространения приложения для пользователей Windows.
-
-## Архитектура 3D движка
-
-### Основные компоненты
-
-1. **Инициализация GLFW и OpenGL**
-   ```java
-   // Инициализация GLFW
-   if (!glfwInit()) {
-       throw new IllegalStateException("Unable to initialize GLFW");
-   }
-
-   // Настройка GLFW
-   glfwDefaultWindowHints();
-   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-   // Создание окна
-   window = glfwCreateWindow(800, 600, "InterNum 3D Cube", NULL, NULL);
+- Launch4j (для создания EXE-файлов)
+- NSIS (для создания самодостаточных EXE-файлов)
+
+### Шаги сборки
+
+1. Клонировать репозиторий:
+   ```bash
+   git clone https://github.com/mystergaif/internum.git
+   cd internum
    ```
 
-2. **Создание 3D объектов**
-   ```java
-   // Создание VAO (Vertex Array Object)
-   vaoId = glGenVertexArrays();
-   glBindVertexArray(vaoId);
-
-   // Создание VBO (Vertex Buffer Object) для вершин
-   vboId = glGenBuffers();
-   glBindBuffer(GL_ARRAY_BUFFER, vboId);
-
-   // Создание буфера для вершин
-   FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
-   verticesBuffer.put(vertices);
-   verticesBuffer.flip();
-
-   glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+2. Собрать JAR-файл:
+   ```bash
+   ./build.sh
    ```
 
-3. **Шейдеры**
-   ```java
-   // Вершинный шейдер
-   String vertexShaderSource =
-       "#version 330 core\n" +
-       "layout (location = 0) in vec3 position;\n" +
-       "layout (location = 1) in vec3 color;\n" +
-       "out vec3 fragColor;\n" +
-       "uniform mat4 model;\n" +
-       "uniform mat4 view;\n" +
-       "uniform mat4 projection;\n" +
-       "void main() {\n" +
-       "    gl_Position = projection * view * model * vec4(position, 1.0);\n" +
-       "    fragColor = color;\n" +
-       "}\n";
-
-   // Фрагментный шейдер
-   String fragmentShaderSource =
-       "#version 330 core\n" +
-       "in vec3 fragColor;\n" +
-       "out vec4 outColor;\n" +
-       "void main() {\n" +
-       "    outColor = vec4(fragColor, 1.0);\n" +
-       "}\n";
+3. Создать самодостаточный EXE-файл:
+   ```bash
+   ./create-standalone-exe.sh
    ```
 
-4. **Цикл отрисовки**
-   ```java
-   // Цикл отрисовки
-   while (!glfwWindowShouldClose(window)) {
-       // Очистка буферов
-       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+## 📚 Руководство по созданию EXE из вашего JAR-файла
 
-       // Обновление угла вращения
-       angle += 0.01f;
+Вы можете использовать этот проект как шаблон для создания самодостаточных EXE-файлов из ваших собственных JAR-файлов. Ниже приведены подробные инструкции для каждого метода.
 
-       // Создание модельной матрицы (вращение куба)
-       float[] model = createRotationMatrix(angle, 0.5f, 1.0f, 0.0f);
+### Метод 1: Создание самодостаточного EXE с помощью NSIS
 
-       // Установка модельной матрицы
-       glUniformMatrix4fv(modelLoc, false, model);
+NSIS позволяет создать EXE-файл, который включает в себя JAR-файл и JRE, распаковывает их во временную директорию, запускает приложение и затем удаляет временные файлы.
 
-       // Привязка VAO
-       glBindVertexArray(vaoId);
+1. **Установите NSIS**:
+   - Windows: Скачайте и установите NSIS с [официального сайта](https://nsis.sourceforge.io/Download)
+   - Linux: `sudo apt-get install nsis` (Ubuntu/Debian) или `sudo dnf install nsis` (Fedora)
 
-       // Отрисовка куба
-       glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
+2. **Подготовьте JAR-файл**:
+   - Убедитесь, что ваш JAR-файл содержит все необходимые зависимости (fat JAR)
+   - Проверьте, что JAR-файл правильно указывает главный класс в манифесте
 
-       // Отвязка VAO
-       glBindVertexArray(0);
-
-       // Обмен буферов
-       glfwSwapBuffers(window);
-
-       // Обработка событий
-       glfwPollEvents();
-   }
+3. **Скачайте JRE**:
+   ```bash
+   mkdir -p jre/windows
+   wget https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.10%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.10_7.zip -O jre.zip
+   unzip jre.zip -d jre/windows
+   rm jre.zip
    ```
 
-### Матрицы преобразования
+4. **Создайте скрипт NSIS**:
+   Создайте файл `your-app.nsi` со следующим содержимым (замените пути и имена на свои):
 
-1. **Модельная матрица** - преобразует координаты объекта из локальной системы координат в мировую.
-2. **Матрица вида** - преобразует координаты из мировой системы координат в систему координат камеры.
-3. **Матрица проекции** - преобразует координаты из системы координат камеры в нормализованные координаты устройства.
+   ```nsis
+   !include "MUI2.nsh"
+   !include "FileFunc.nsh"
 
-```java
-// Создание матрицы проекции (перспектива)
-float aspectRatio = 800.0f / 600.0f;
-float[] projection = createPerspectiveMatrix(45.0f, aspectRatio, 0.1f, 100.0f);
+   Name "YourAppName"
+   OutFile "YourApp_Standalone.exe"
+   Unicode True
 
-// Создание матрицы вида (камера)
-float[] view = createLookAtMatrix(
-    0.0f, 0.0f, 3.0f,  // Позиция камеры
-    0.0f, 0.0f, 0.0f,  // Точка, на которую смотрит камера
-    0.0f, 1.0f, 0.0f   // Вектор "вверх"
-);
-```
+   ; Временная директория для распаковки
+   Var TempDir
 
-## Логирование
+   ; Интерфейс
+   !define MUI_ICON "path/to/your/icon.ico"
+   !define MUI_WELCOMEFINISHPAGE_BITMAP "path/to/your/splash.bmp"
 
-Приложение создает файл `internum_3d_log.txt` в директории запуска. Этот файл содержит информацию о запуске приложения и возможных ошибках.
+   ; Страницы
+   !insertmacro MUI_PAGE_INSTFILES
+   !insertmacro MUI_LANGUAGE "Russian"
 
-```java
-// Пример логирования
-private static void log(String message) {
-    if (logStream != null) {
-        logStream.println("[" + new Date() + "] " + message);
-        logStream.flush();
-    }
-}
-```
+   Section "Main"
+       ; Создаем временную директорию
+       GetTempFileName $TempDir
+       Delete $TempDir
+       CreateDirectory $TempDir
 
-## Управление
+       ; Распаковываем JRE
+       SetOutPath "$TempDir\jre"
+       File /r "jre\windows\*"
 
-- **Escape** - закрыть приложение
-- Куб автоматически вращается вокруг диагональной оси
+       ; Распаковываем JAR
+       SetOutPath "$TempDir"
+       File "path/to/your/app.jar"
 
-## Расширение проекта для создания игры
+       ; Запускаем приложение
+       ExecWait '"$TempDir\jre\bin\javaw.exe" -jar "$TempDir\app.jar"'
 
-### 1. Добавление игровых объектов
+       ; Удаляем временные файлы
+       RMDir /r "$TempDir"
+   SectionEnd
+   ```
 
-Для добавления новых 3D объектов в сцену, создайте класс для каждого типа объекта:
+5. **Скомпилируйте EXE-файл**:
+   ```bash
+   makensis your-app.nsi
+   ```
 
-```java
-public class GameObject {
-    private float[] vertices;
-    private int[] indices;
-    private int vaoId;
-    private int vboId;
-    private int vboiId;
-    private float[] position;
-    private float[] rotation;
-    private float[] scale;
+6. **Проверьте результат**:
+   - Запустите созданный EXE-файл
+   - Убедитесь, что приложение работает корректно
+   - Проверьте, что временные файлы удаляются после закрытия приложения
 
-    // Конструктор, методы для инициализации и отрисовки
-}
-```
+### Метод 2: Создание EXE с помощью Launch4j
 
-### 2. Создание игрового цикла
+Launch4j создает EXE-файл, который запускает JAR-файл с помощью указанной JRE. Этот метод не включает JRE в EXE-файл, но позволяет указать путь к JRE или использовать системную Java.
 
-```java
-// Игровой цикл
-while (!glfwWindowShouldClose(window)) {
-    // Вычисление времени между кадрами
-    float currentTime = (float) glfwGetTime();
-    float deltaTime = currentTime - lastTime;
-    lastTime = currentTime;
+1. **Установите Launch4j**:
+   - Windows: Скачайте и установите Launch4j с [официального сайта](http://launch4j.sourceforge.net/)
+   - Linux: Скачайте архив и распакуйте его:
+     ```bash
+     wget https://sourceforge.net/projects/launch4j/files/launch4j-3/3.50/launch4j-3.50-linux.tgz
+     tar -xzf launch4j-3.50-linux.tgz
+     ```
 
-    // Обработка ввода
-    processInput(window, deltaTime);
+2. **Создайте конфигурационный XML-файл**:
+   Создайте файл `your-app.xml` со следующим содержимым (замените пути и имена на свои):
 
-    // Обновление игровой логики
-    updateGame(deltaTime);
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <launch4jConfig>
+     <dontWrapJar>false</dontWrapJar>
+     <headerType>gui</headerType>
+     <jar>path/to/your/app.jar</jar>
+     <outfile>YourApp.exe</outfile>
+     <errTitle>Ошибка приложения</errTitle>
+     <cmdLine></cmdLine>
+     <chdir>.</chdir>
+     <priority>normal</priority>
+     <downloadUrl>https://adoptium.net/</downloadUrl>
+     <supportUrl></supportUrl>
+     <stayAlive>false</stayAlive>
+     <restartOnCrash>false</restartOnCrash>
+     <manifest></manifest>
+     <icon>path/to/your/icon.ico</icon>
+     <jre>
+       <path>%JAVA_HOME%;%PATH%</path>
+       <bundledJre64Bit>false</bundledJre64Bit>
+       <bundledJreAsFallback>false</bundledJreAsFallback>
+       <minVersion>17</minVersion>
+       <maxVersion></maxVersion>
+       <jdkPreference>preferJre</jdkPreference>
+       <runtimeBits>64/32</runtimeBits>
+     </jre>
+     <splash>
+       <file>path/to/your/splash.bmp</file>
+       <waitForWindow>true</waitForWindow>
+       <timeout>5</timeout>
+       <timeoutErr>true</timeoutErr>
+     </splash>
+     <versionInfo>
+       <fileVersion>1.0.0.0</fileVersion>
+       <txtFileVersion>1.0.0</txtFileVersion>
+       <fileDescription>Your Application Description</fileDescription>
+       <copyright>Your Copyright</copyright>
+       <productVersion>1.0.0.0</productVersion>
+       <txtProductVersion>1.0.0</txtProductVersion>
+       <productName>Your Application Name</productName>
+       <companyName>Your Company</companyName>
+       <internalName>YourApp</internalName>
+       <originalFilename>YourApp.exe</originalFilename>
+     </versionInfo>
+   </launch4jConfig>
+   ```
 
-    // Отрисовка
-    render();
+3. **Создайте EXE-файл**:
+   ```bash
+   # Windows
+   launch4j.exe your-app.xml
 
-    // Обмен буферов
-    glfwSwapBuffers(window);
+   # Linux
+   ./launch4j/launch4j your-app.xml
+   ```
 
-    // Обработка событий
-    glfwPollEvents();
-}
-```
+4. **Для включения JRE в EXE-файл**:
+   Измените секцию `<jre>` в XML-файле:
+   ```xml
+   <jre>
+     <path>jre</path>
+     <bundledJre64Bit>true</bundledJre64Bit>
+     <bundledJreAsFallback>true</bundledJreAsFallback>
+     <minVersion></minVersion>
+     <maxVersion></maxVersion>
+     <jdkPreference>jreOnly</jdkPreference>
+     <runtimeBits>64</runtimeBits>
+   </jre>
+   ```
+   И поместите JRE в директорию `jre` рядом с EXE-файлом.
 
-### 3. Обработка ввода
+### Метод 3: Создание самодостаточного JAR с помощью Maven Shade Plugin
 
-```java
-private void processInput(long window, float deltaTime) {
-    // Проверка нажатия клавиш
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        // Движение вперед
-        cameraPosition[2] -= cameraSpeed * deltaTime;
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        // Движение назад
-        cameraPosition[2] += cameraSpeed * deltaTime;
-    }
-    // и т.д.
-}
-```
+Этот метод создает "fat JAR" - JAR-файл, который содержит все необходимые зависимости. Он не создает EXE-файл, но может быть использован как основа для методов 1 и 2.
 
-### 4. Добавление физики
+1. **Добавьте Maven Shade Plugin в ваш pom.xml**:
+   ```xml
+   <build>
+     <plugins>
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-shade-plugin</artifactId>
+         <version>3.4.1</version>
+         <executions>
+           <execution>
+             <phase>package</phase>
+             <goals>
+               <goal>shade</goal>
+             </goals>
+             <configuration>
+               <transformers>
+                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                   <mainClass>com.yourcompany.yourapp.MainClass</mainClass>
+                 </transformer>
+               </transformers>
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
+     </plugins>
+   </build>
+   ```
 
-Для простой физики можно использовать библиотеку JBullet или реализовать простую систему обнаружения столкновений:
+2. **Соберите JAR-файл**:
+   ```bash
+   mvn clean package
+   ```
 
-```java
-private boolean checkCollision(GameObject obj1, GameObject obj2) {
-    // Простая проверка столкновения по ограничивающим сферам
-    float distance = distance(obj1.getPosition(), obj2.getPosition());
-    return distance < (obj1.getRadius() + obj2.getRadius());
-}
-```
+3. **Проверьте результат**:
+   ```bash
+   java -jar target/your-app-1.0-SNAPSHOT.jar
+   ```
 
-### 5. Добавление звука
+### Метод 4: Использование jpackage (Java 14+)
 
-LWJGL включает OpenAL для работы со звуком:
+jpackage - это инструмент, включенный в JDK 14 и выше, который позволяет создавать нативные установщики для различных платформ.
 
-```java
-// Инициализация OpenAL
-ALContext context = ALContext.create();
-context.makeCurrent();
+1. **Подготовьте JAR-файл**:
+   - Создайте fat JAR с помощью Maven Shade Plugin (см. Метод 3)
 
-// Загрузка звукового файла
-int buffer = alGenBuffers();
-WaveData waveFile = WaveData.create("sound.wav");
-alBufferData(buffer, waveFile.format, waveFile.data, waveFile.samplerate);
-waveFile.dispose();
+2. **Создайте EXE-файл с помощью jpackage**:
+   ```bash
+   jpackage --input target/ \
+     --name YourApp \
+     --main-jar your-app-1.0-SNAPSHOT.jar \
+     --main-class com.yourcompany.yourapp.MainClass \
+     --type app-image \
+     --icon path/to/your/icon.ico \
+     --app-version 1.0.0 \
+     --vendor "Your Company" \
+     --copyright "Copyright © 2024 Your Company" \
+     --description "Your Application Description"
+   ```
 
-// Создание источника звука
-int source = alGenSources();
-alSourcei(source, AL_BUFFER, buffer);
+3. **Для создания установщика**:
+   ```bash
+   jpackage --input target/ \
+     --name YourApp \
+     --main-jar your-app-1.0-SNAPSHOT.jar \
+     --main-class com.yourcompany.yourapp.MainClass \
+     --type exe \
+     --icon path/to/your/icon.ico \
+     --app-version 1.0.0 \
+     --vendor "Your Company" \
+     --copyright "Copyright © 2024 Your Company" \
+     --description "Your Application Description" \
+     --win-shortcut \
+     --win-menu
+   ```
 
-// Воспроизведение звука
-alSourcePlay(source);
-```
+### Советы и рекомендации
 
-### 6. Добавление пользовательского интерфейса
+1. **Тестирование**:
+   - Всегда тестируйте созданные EXE-файлы на чистой системе без установленной Java
+   - Проверяйте работу на разных версиях Windows
 
-Для создания пользовательского интерфейса можно использовать библиотеку NanoVG или создать простой интерфейс с помощью OpenGL:
+2. **Размер файла**:
+   - NSIS и Launch4j с включенной JRE создают большие файлы (20-30 МБ)
+   - Для уменьшения размера можно использовать компактную JRE, созданную с помощью jlink
 
-```java
-private void renderUI() {
-    // Отрисовка текста
-    textRenderer.renderText("Score: " + score, 10, 10, 1.0f);
+3. **Логирование**:
+   - Добавьте логирование в ваше приложение для отладки проблем
+   - Создайте отдельную отладочную версию EXE-файла, которая сохраняет логи
 
-    // Отрисовка полосы здоровья
-    renderHealthBar(10, 30, health / maxHealth);
-}
-```
+4. **Иконки и заставки**:
+   - Используйте качественные иконки и заставки для профессионального вида
+   - Иконки должны быть в формате .ico, заставки - в формате .bmp
 
-## Технические детали
+5. **Обработка ошибок**:
+   - Добавьте обработку ошибок в скрипты NSIS и конфигурацию Launch4j
+   - Показывайте понятные сообщения об ошибках пользователю
 
-Приложение использует:
-- **LWJGL (Lightweight Java Game Library)** - Java-библиотека для доступа к нативным API, таким как OpenGL, OpenAL и OpenCL.
-- **OpenGL** - кроссплатформенный API для отрисовки 2D и 3D графики.
-- **GLFW** - библиотека для создания окон, контекстов OpenGL и обработки ввода.
-- **Шейдеры** - программы, выполняемые на GPU, которые определяют, как отрисовываются вершины и пиксели.
-- **Maven** - инструмент для управления зависимостями и сборки проекта.
-- **Launch4j** - инструмент для создания EXE-файлов из JAR-файлов.
+## 📋 Использование
 
-## Оптимизация производительности
+### Windows
 
-### 1. Использование VAO и VBO
+1. Скачайте `InterNumApp_Standalone.exe` из раздела [Releases](https://github.com/mystergaif/internum/releases)
+2. Запустите файл двойным щелчком
+3. Наслаждайтесь приложением!
 
-Vertex Array Objects (VAO) и Vertex Buffer Objects (VBO) позволяют эффективно передавать данные о вершинах на GPU:
+### Linux/macOS
 
-```java
-// Создание VAO
-vaoId = glGenVertexArrays();
-glBindVertexArray(vaoId);
+1. Убедитесь, что у вас установлена Java 17 или выше
+2. Скачайте `internum-app-1.0-SNAPSHOT.jar` из раздела [Releases](https://github.com/mystergaif/internum/releases)
+3. Запустите файл командой:
+   ```bash
+   java -jar internum-app-1.0-SNAPSHOT.jar
+   ```
 
-// Создание VBO
-vboId = glGenBuffers();
-glBindBuffer(GL_ARRAY_BUFFER, vboId);
-glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-```
+## 🤝 Вклад в проект
 
-### 2. Использование индексов
+Мы приветствуем вклад в проект! Если у вас есть идеи по улучшению:
 
-Индексы позволяют повторно использовать вершины, что уменьшает объем данных, передаваемых на GPU:
+1. Форкните репозиторий
+2. Создайте ветку для вашей функции (`git checkout -b feature/amazing-feature`)
+3. Зафиксируйте изменения (`git commit -m 'Add some amazing feature'`)
+4. Отправьте изменения в ваш форк (`git push origin feature/amazing-feature`)
+5. Откройте Pull Request
 
-```java
-// Создание VBO для индексов
-vboiId = glGenBuffers();
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
-glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
-```
+## 📄 Лицензия
 
-### 3. Фрустум каллинг
+Этот проект распространяется под лицензией MIT. См. файл [LICENSE](LICENSE) для получения дополнительной информации.
 
-Отрисовка только тех объектов, которые находятся в поле зрения камеры:
+## 📞 Контакты
 
-```java
-private boolean isInFrustum(GameObject obj) {
-    // Проверка, находится ли объект в поле зрения камеры
-    // ...
-    return true; // или false
-}
-```
+MisterGaif - [GitHub](https://github.com/mystergaif)
 
-### 4. Уровни детализации (LOD)
-
-Использование разных моделей с разным уровнем детализации в зависимости от расстояния до камеры:
-
-```java
-private void updateLOD(GameObject obj) {
-    float distance = distance(cameraPosition, obj.getPosition());
-    if (distance < 10.0f) {
-        obj.setModel(highDetailModel);
-    } else if (distance < 50.0f) {
-        obj.setModel(mediumDetailModel);
-    } else {
-        obj.setModel(lowDetailModel);
-    }
-}
-```
-
-## Ресурсы для изучения
-
-- [LWJGL Wiki](https://github.com/LWJGL/lwjgl3-wiki/wiki)
-- [OpenGL Tutorial](https://learnopengl.com/)
-- [GLFW Documentation](https://www.glfw.org/docs/latest/)
-- [Java Game Development with LWJGL](https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/)
-- [Maven Documentation](https://maven.apache.org/guides/index.html)
-
-## Лицензия
-
-Этот проект распространяется под лицензией MIT. См. файл LICENSE для получения дополнительной информации.
+Ссылка на проект: [https://github.com/mystergaif/internum](https://github.com/mystergaif/internum)
