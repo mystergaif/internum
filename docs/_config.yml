@@ -1,0 +1,8 @@
+theme: jekyll-theme-cayman
+title: InterNum
+description: Самодостаточные Java-приложения без установки Java
+show_downloads: true
+github:
+  repository_url: https://github.com/mystergaif/internum
+  zip_url: https://github.com/mystergaif/internum/archive/refs/heads/main.zip
+  tar_url: https://github.com/mystergaif/internum/archive/refs/heads/main.tar.gz
